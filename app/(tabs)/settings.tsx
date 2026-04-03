@@ -6,18 +6,41 @@ import { StyleSheet, View } from "react-native";
 export default function Settings() {
   return (
     <>
-      <ScreenLayout style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
+      <ScreenLayout style={styles.SettingsScreenLayout}>
         <View style={{ flexShrink: 1, gap: 15 }}>
-          <LinkButton
-            href="/(tabs)/settings/add-model"
-            label="Add Model"
-            icon={"plus-circle"}
-          />
-          <AccordionMenu icon="meters" label="Models">
+          <AccordionMenu icon="office-building" label="Company Settings">
             <LinkButton
-              href="/(tabs)/settings/connected-devices"
-              label="Connected Devices"
-              icon={"mobile"}
+              href="/(tabs)/settings/company/list"
+              label="List Companies"
+              icon={"format-list-text"}
+            />
+            <LinkButton
+              href="/(tabs)/settings/company/add"
+              label="Add Company"
+              icon={"playlist-plus"}
+            />
+            <LinkButton
+              href="/(tabs)/settings/company/remove"
+              label="Remove Company"
+              icon={"playlist-remove"}
+            />
+          </AccordionMenu>
+
+          <AccordionMenu icon="meteor" label="Models">
+            <LinkButton
+              href="/(tabs)/settings/models/list"
+              label="List Models"
+              icon={"format-list-text"}
+            />
+            <LinkButton
+              href="/(tabs)/settings/models/add"
+              label="Add Model"
+              icon={"playlist-plus"}
+            />
+            <LinkButton
+              href="/(tabs)/settings/models/remove"
+              label="Remove Model"
+              icon={"playlist-remove"}
             />
           </AccordionMenu>
         </View>
@@ -27,5 +50,5 @@ export default function Settings() {
 }
 
 const styles = StyleSheet.create({
-  SettingsScreenLayout: {},
+  SettingsScreenLayout: { borderTopLeftRadius: 0, borderTopRightRadius: 0 },
 });

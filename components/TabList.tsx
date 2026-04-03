@@ -8,6 +8,7 @@ interface Meter {
   icon: string;
 }
 const TabList = () => {
+  const [activeTab, setActiveTab] = useState<string>("Tümü");
   const [meters, setMeters] = useState<Meter[]>([
     {
       label: "Tümü",
@@ -37,7 +38,8 @@ const TabList = () => {
           label={item.label}
           key={index}
           icon={item.icon}
-          active={item.isActive}
+          active={activeTab === item.label}
+          onPress={() => setActiveTab(item.label)}
         />
       )}
       keyExtractor={(item, index) => index.toString()}

@@ -31,7 +31,6 @@ const AccordionMenu = ({
       <Pressable
         onPress={() => {
           setIsOpen((prev) => !prev);
-          accordionBackground.value = !isOpen ? "#E0E0E0" : "#fff";
         }}
         style={[
           {
@@ -39,6 +38,9 @@ const AccordionMenu = ({
             alignItems: "center",
             justifyContent: "space-between",
             width: "100%",
+            paddingInlineStart: 20,
+            paddingInlineEnd: 25,
+            paddingVertical: 25,
           },
         ]}
       >
@@ -65,23 +67,24 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    paddingInlineStart: 20,
-    paddingInlineEnd: 25,
-    paddingVertical: 5,
+    // paddingInlineStart: 20,
+    // paddingInlineEnd: 25,
+    // paddingVertical: 25,
     borderRadius: 10,
   },
   AccordionMenuContent: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 15,
+    gap: 20,
   },
   AccordionMenuLabel: {
-    marginLeft: 10,
+    // marginLeft: 10,
     fontSize: 16,
     fontWeight: "500",
   },
   AccordionMenuDropdownContent: {
     marginTop: 10,
+    paddingInlineStart: 20,
     gap: 10,
   },
 });

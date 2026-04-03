@@ -1,5 +1,5 @@
 import { LinkButtonProps } from "@/types/components";
-import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
@@ -16,7 +16,7 @@ const LinkButton = ({ href, label, icon }: LinkButtonProps) => {
           }}
         >
           <View style={styles.LinkButtonContent}>
-            <FontAwesome name={icon} size={24} color={"#2CB4ED"} />
+            <MaterialCommunityIcons name={icon} size={24} color={"#2CB4ED"} />
             <Text style={styles.LinkButtonLabel}>{label}</Text>
           </View>
           <MaterialCommunityIcons name="chevron-right" size={24} />
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#fff",
-    paddingInlineStart: 20,
+    paddingInlineStart: 25,
     paddingInlineEnd: 25,
     paddingVertical: 25,
     borderRadius: 10,
@@ -39,10 +39,9 @@ const styles = StyleSheet.create({
   LinkButtonContent: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 15,
+    gap: 20,
   },
   LinkButtonLabel: {
-    marginLeft: 10,
     fontSize: 16,
     fontWeight: "500",
   },
