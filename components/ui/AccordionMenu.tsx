@@ -46,7 +46,11 @@ const AccordionMenu = ({
       >
         <View style={styles.AccordionMenuContent}>
           {icon && (
-            <MaterialCommunityIcons name={icon} size={24} color={"#2CB4ED"} />
+            <MaterialCommunityIcons
+              name={icon as any}
+              size={24}
+              color={"#2CB4ED"}
+            />
           )}
           <Text style={styles.AccordionMenuLabel}>{label}</Text>
         </View>

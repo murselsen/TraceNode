@@ -9,7 +9,7 @@ interface Meter {
 }
 const TabList = () => {
   const [activeTab, setActiveTab] = useState<string>("Tümü");
-  const [meters, setMeters] = useState<Meter[]>([
+  const [meters] = useState<Meter[]>([
     {
       label: "Tümü",
       isActive: true,

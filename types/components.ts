@@ -16,10 +16,9 @@ export interface LinkButtonProps {
   label: string;
   icon?: string | undefined;
 }
-export interface AccordionMenuProps extends LinkButtonProps {
+
+export interface AccordionMenuProps {
+  icon?: string;
+  label: string;
   children?: React.ReactNode;
 }
-// diğer yazımı
-// export interface AccordionMenuProps<T> extends LinkButtonProps {
-//   children?: React.ReactNode;
-// }

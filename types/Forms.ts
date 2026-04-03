@@ -1,5 +1,13 @@
+import { ImageSourcePropType } from "react-native";
+
 export interface AddModelFormValues {
-  modelName: string;
-  modelUrl: string;
-  modelType: string;
+  key: string;
+  name: string;
+  rs: boolean;
+  image: ImageSourcePropType | null;
+  materialCode: number | null;
+}
+export interface AddCompanyFormValues {
+  flag: string;
+  name: string | null;
 }
