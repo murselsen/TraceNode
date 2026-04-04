@@ -28,17 +28,17 @@ export default function Settings() {
 
           <AccordionMenu icon="meteor" label="Models">
             <LinkButton
-              href="/(tabs)/settings/models/list"
+              href="/(tabs)/settings/model/list"
               label="List Models"
               icon={"format-list-text"}
             />
             <LinkButton
-              href="/(tabs)/settings/models/add"
+              href="/(tabs)/settings/model/add"
               label="Add Model"
               icon={"playlist-plus"}
             />
             <LinkButton
-              href="/(tabs)/settings/models/remove"
+              href="/(tabs)/settings/model/remove"
               label="Remove Model"
               icon={"playlist-remove"}
             />

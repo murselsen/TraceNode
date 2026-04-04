@@ -38,7 +38,7 @@ const TabLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="settings/add-model"
+        name="settings/model/add"
         options={{
           href: null,
           title: "Add Model",
