@@ -52,6 +52,8 @@ const FormInput = ({
         />
       </View>
     );
+  } if (type === "image") {
+    
   }
 };
 
