@@ -16,7 +16,7 @@ const AddModel = () => {
   return (
     <>
       <ScreenLayout>
-        <View style={{ flexShrink: 1, paddingVertical: 40 }}>
+        <View style={{ flexShrink: 1, paddingVertical: 40, gap: 20 }}>
           <Controller
             control={control}
             rules={{
@@ -24,13 +24,31 @@ const AddModel = () => {
             }}
             render={(input) => (
               <FormInput
+                type="text"
                 field={input.field}
                 fieldState={input.fieldState}
                 formState={input.formState}
-                fieldPlaceholder="First Name"
+                fieldPlaceholder="Model Key"
               />
             )}
-            name="firstName"
+            name="key"
+          />
+
+          <Controller
+            control={control}
+            rules={{
+              required: true,
+            }}
+            render={(input) => (
+              <FormInput
+                type="text"
+                field={input.field}
+                fieldState={input.fieldState}
+                formState={input.formState}
+                fieldPlaceholder="Model Name"
+              />
+            )}
+            name="model"
           />
         </View>
       </ScreenLayout>

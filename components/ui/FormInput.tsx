@@ -7,48 +7,52 @@ import { StyleSheet, Text, TextInput, View } from "react-native";
 // formState
 
 const FormInput = ({
+  type,
   field,
   fieldState,
   formState,
   fieldPlaceholder,
 }: FormInputProps) => {
   const { onChange, onBlur, value } = field;
+
   const [touched, setTouched] = useState<boolean>(false);
-  return (
-    <View
-      style={[
-        styles.InputContainer,
-        touched && {
-          paddingVertical: 25,
-        },
-      ]}
-    >
-      <Text
+  if (type === "text") {
+    return (
+      <View
         style={[
-          styles.InputLabel,
+          styles.InputContainer,
           touched && {
-            top: 12,
-            fontSize: 13,
-            color: "#d1d1d1",
+            paddingVertical: 25,
           },
         ]}
       >
-        {fieldPlaceholder}
-      </Text>
-      <TextInput
-        style={styles.TextInput}
-        onChangeText={onChange}
-        onBlur={() => {
-          onBlur();
-          value === "" && setTouched(false);
-        }}
-        onFocus={(event) => {
-          setTouched(true);
-        }}
-        value={touched ? value : ""}
-      />
-    </View>
-  );
+        <Text
+          style={[
+            styles.InputLabel,
+            touched && {
+              top: 12,
+              fontSize: 13,
+              color: "#d1d1d1",
+            },
+          ]}
+        >
+          {fieldPlaceholder}
+        </Text>
+        <TextInput
+          style={styles.TextInput}
+          onChangeText={onChange}
+          onBlur={() => {
+            onBlur();
+            value === "" && setTouched(false);
+          }}
+          onFocus={(event) => {
+            setTouched(true);
+          }}
+          value={touched ? value : ""}
+        />
+      </View>
+    );
+  }
 };
 
 const styles = StyleSheet.create({
@@ -65,7 +69,7 @@ const styles = StyleSheet.create({
     left: 20,
     color: "#1f1f1f",
     fontWeight: "600",
-    fontSize: 15,
+    fontSize: 17,
     fontFamily: "Inter-Regular",
     transitionProperty: "all",
     transitionDuration: "0.3s",
