@@ -1,7 +1,7 @@
 import ScreenLayout from "@/components/ScreenLayout";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { View } from "react-native";
+import { Button, View } from "react-native";
 
 import FormInput from "@/components/ui/FormInput";
 import { AddModelFormValues } from "@/types/Forms";
@@ -12,6 +12,10 @@ const AddModel = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<AddModelFormValues>();
+
+  const onSubmit = (data: AddModelFormValues) => {
+    console.log(data);
+  };
 
   return (
     <>
@@ -50,6 +54,8 @@ const AddModel = () => {
             )}
             name="model"
           />
+
+          <Button title="Submit" onPress={handleSubmit(onSubmit)} />
         </View>
       </ScreenLayout>
     </>

@@ -44,6 +44,10 @@ const TabLayout = () => {
           title: "Add Model",
         }}
       />
+      <Tabs.Screen
+        name="login"
+        options={{ headerShown: false, tabBarStyle: { display: "none" } }}
+      />
     </Tabs>
   );
 };

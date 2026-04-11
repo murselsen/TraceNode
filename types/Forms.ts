@@ -11,3 +11,8 @@ export interface AddCompanyFormValues {
   flag: string;
   name: string | null;
 }
+
+export interface SignInFormValues {
+  email: string;
+  password: string;
+}
