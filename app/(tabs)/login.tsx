@@ -1,12 +1,13 @@
 import { Image } from "expo-image";
 import React, { useRef, useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import type { TextInput as TextInputType } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // Form Modules
+import LoginFormInput from "@/components/ui/LoginFormInput";
 import { SignInFormValues } from "@/types/Forms";
 import { FontAwesome } from "@expo/vector-icons";
-import { Formik } from "formik";
 import * as Yup from "yup";
 
 const loginBackImage = require("../../assets/images/loginBackImage.jpg");
@@ -17,18 +18,26 @@ interface LoginFormTabs {
 }
 
 const Login = () => {
-  const LoginSchema = Yup.object().shape({
-    email: Yup.string()
-      .email("Geçerli bir email girin")
-      .required("Email zorunludur"),
-    password: Yup.string()
-      .min(6, "Şifre en az 6 karakter olmalı")
-      .required("Şifre zorunludur"),
-  });
-
   const initialValues: SignInFormValues = {
     email: "",
     password: "",
+  };
+  const LoginForm = {
+    tabs: useState<LoginFormTabs["tabs"]>("start"),
+    inputs: {
+      emailInput: useRef<TextInputType>(null),
+      passwordInput: useRef<TextInputType>(null),
+    },
+    schema: {
+      email: Yup.string()
+        .email("Geçerli bir email girin")
+        .required("Email zorunludur"),
+      password: Yup.string()
+        .min(6, "Şifre en az 6 karakter olmalı")
+        .required("Şifre zorunludur"),
+    },
+    values: useState<SignInFormValues>(initialValues),
+    errors: useState<SignInFormValues>(initialValues),
   };
 
   const handleSubmit = (values: SignInFormValues) => {
@@ -36,8 +45,49 @@ const Login = () => {
     // Burada API isteği veya Redux action tetiklenebilir
   };
 
-  const [tab, setTab] = useState<LoginFormTabs["tabs"]>("start");
-  const buttonBackgroundColor = useRef<string>("#2CB4ED");
+  const handleEmailValidationAndTabSwitch = () => {
+    LoginForm.schema.email
+      .validate(LoginForm.values[0].email)
+      .then((valid) => {
+        LoginForm.tabs[1]("passwordTab");
+        LoginForm.inputs.passwordInput.current?.focus();
+        LoginForm.errors[1]((prev) => ({
+          ...prev,
+          email: "",
+        }));
+      })
+      .catch((err) => {
+        LoginForm.errors[1]((prev) => ({
+          ...prev,
+          email: err.message,
+        }));
+      });
+  };
+
+  const handlePasswordValidationAndSubmit = () => {
+    LoginForm.schema.password
+      .validate(LoginForm.values[0].password)
+      .then((valid) => {
+        LoginForm.errors[1]((prev) => ({
+          ...prev,
+          password: "",
+        }));
+        handleSubmit(LoginForm.values[0]);
+      })
+      .catch((err) => {
+        LoginForm.errors[1]((prev) => ({
+          ...prev,
+          password: err.message,
+        }));
+      });
+  };
+
+  const [tab, setTab] = LoginForm.tabs;
+  const [values, setValues] = LoginForm.values;
+  const [errors, setErrors] = LoginForm.errors;
+  const emailInputRef = LoginForm.inputs.emailInput;
+  const passwordInputRef = LoginForm.inputs.passwordInput;
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Image source={loginBackImage} style={StyleSheet.absoluteFill} />
@@ -48,94 +98,162 @@ const Login = () => {
         </View>
 
         <View style={styles.LoginBody}>
-         
-            <Text style={{ color: "white", fontSize: 16 }}>
-              TraceNode&apos;a hoş geldiniz! Lütfen giriş yaparak devam edin.
-            </Text>
+          <Text style={{ color: "white", fontSize: 16 }}>
+            TraceNode&apos;a hoş geldiniz! Lütfen giriş yaparak devam edin.
+          </Text>
 
-            <View style={styles.LoginFormTabs}>
+          <View style={styles.LoginFormTabs}>
+            {/* Start Tab */}
+            {tab === "start" && (
               <Pressable
-                style={[
-                  styles.LoginFormButton,
-                  { backgroundColor: buttonBackgroundColor.current },
-                ]}
-                onPress={() => setTab("emailTab")}
+                style={[styles.LoginFormButton, { backgroundColor: "#2CB4ED" }]}
+                onPress={() => {
+                  LoginForm.inputs.emailInput.current?.focus();
+                  LoginForm.tabs[1]("emailTab");
+                }}
               >
-                <Text style={{ color: "white", fontSize: 16 }}>Giriş Yap</Text>
+                <Text style={{ color: "white", fontSize: 16 }}>Devam Et</Text>
               </Pressable>
+            )}
 
-              <View style={{ gap: 10, width: "100%" }}>
-                <View style={styles.LoginFormInput}>
-                  <TextInput
-                    inputMode="email"
-                    placeholder="E-posta adresinizi girin"
-                    // onBlur={  handleBlur("email")}
-                    // onChangeText={formik.handleChange("email")}
-                    style={{
-                      borderRightWidth: 1,
-                      borderRightColor: "rgba(0, 0, 0, 0.1)",
-                      flex: 1,
-                    }}
-                    value={"formik.values.email"}
-                    keyboardType="email-address"
-                    textContentType="emailAddress"
+            {/* Email Tab */}
+            {tab === "emailTab" && (
+              <LoginFormInput
+                value={values.email}
+                onChange={(inputText) => {
+                  setValues((prev) => ({
+                    ...prev,
+                    email: inputText,
+                  }));
+                  setErrors((prev) => ({
+                    ...prev,
+                    email: "",
+                  }));
+                }}
+                errorMessage={errors.email}
+                onEditing={handleEmailValidationAndTabSwitch}
+                options={{
+                  ref: emailInputRef,
+                  inputMode: "email",
+                  placeholder: "E-Posta Adresinizi Girin",
+                }}
+              >
+                <Pressable onPress={handleEmailValidationAndTabSwitch}>
+                  <FontAwesome
+                    name="chevron-circle-right"
+                    size={18}
+                    color={"#2CB4ED"}
                   />
-                  <Pressable onPress={() => setTab("passwordTab")}>
-                    <FontAwesome
-                      name="chevron-circle-right"
-                      size={18}
-                      color={buttonBackgroundColor.current}
-                    />
-                  </Pressable>
-                </View>
+                </Pressable>
+              </LoginFormInput>
+            )}
 
-                <View style={{ gap: 10, width: "100%" }}>
-                  <View style={styles.LoginFormInput}>
-                    <TextInput
-                      inlineImageLeft="search_icon"
-                      placeholder="Şifrenizi girin"
-                      // onBlur={handleBlur("password")}
-                      // onChangeText={handleChange("password")}
-                      style={{
-                        borderRightWidth: 1,
-                        borderRightColor: "rgba(0, 0, 0, 0.1)",
-                        flex: 1,
-                      }}
-                      value={"values.password"}
-                      secureTextEntry
-                      textContentType="password"
-                    />
+            {/* Password Tab */}
+            {tab === "passwordTab" && (
+              <LoginFormInput
+                value={values.password}
+                onChange={(inputText) => {
+                  setValues((prev) => ({
+                    ...prev,
+                    password: inputText,
+                  }));
+                  setErrors((prev) => ({
+                    ...prev,
+                    password: "",
+                  }));
+                }}
+                onEditing={handlePasswordValidationAndSubmit}
+                options={{
+                  ref: passwordInputRef,
+                  inputMode: "text",
+                  placeholder: "Şifrenizi Girin",
+                }}
+              >
+                <Pressable
+                  onPress={() => {
+                    LoginForm.tabs[1]("emailTab");
+                    LoginForm.inputs.emailInput.current?.focus();
+                  }}
+                  style={{
+                    borderRightWidth: 1,
+                    borderRightColor: "rgba(0, 0, 0, 0.1)",
+                    paddingRight: 10,
+                  }}
+                >
+                  <FontAwesome
+                    name="chevron-circle-left"
+                    size={18}
+                    color={"#2CB4ED"}
+                  />
+                </Pressable>
+                <Pressable
+                  onPress={async () => {
+                    handlePasswordValidationAndSubmit();
+                  }}
+                >
+                  <FontAwesome name="sign-in" size={22} color={"#2CB4ED"} />
+                </Pressable>
+              </LoginFormInput>
+            )}
+            {/* <View style={styles.LoginFormTab}>
+              <View style={styles.LoginFormInput}>
+                <TextInput
+                  ref={LoginForm.inputs.passwordInput}
+                  placeholder="Şifrenizi girin"
+                  style={{
+                    borderRightWidth: 1,
+                    borderRightColor: "rgba(0, 0, 0, 0.1)",
+                    flex: 1,
+                  }}
+                  value={LoginForm.values[0].password}
+                  onChangeText={(s) =>
+                    LoginForm.values[1]((prev) => ({
+                      ...prev,
+                      password: s,
+                    }))
+                  }
+                  secureTextEntry={true}
+                  textContentType="password"
+                />
 
-                    <Pressable
-                      onPress={() => setTab("emailTab")}
-                      style={{
-                        borderRightWidth: 1,
-                        borderRightColor: "rgba(0, 0, 0, 0.1)",
-                        paddingRight: 10,
-                      }}
-                    >
-                      <FontAwesome
-                        name="chevron-circle-left"
-                        size={18}
-                        color={buttonBackgroundColor.current}
-                      />
-                    </Pressable>
-                    <Pressable
-                      onPress={
-                        () => console.log("Submit") /* formik.handleSubmit() */
-                      }
-                    >
-                      <FontAwesome
-                        name="sign-in"
-                        size={22}
-                        color={buttonBackgroundColor.current}
-                      />
-                    </Pressable>
-                  </View>
-                </View>
+                <Pressable
+                  onPress={() => {
+                    LoginForm.tabs[1]("emailTab");
+                    LoginForm.inputs.emailInput.current?.focus();
+                  }}
+                  style={{
+                    borderRightWidth: 1,
+                    borderRightColor: "rgba(0, 0, 0, 0.1)",
+                    paddingRight: 10,
+                  }}
+                >
+                  <FontAwesome
+                    name="chevron-circle-left"
+                    size={18}
+                    color={buttonBackgroundColor.current}
+                  />
+                </Pressable>
+                <Pressable
+                  onPress={async () => {
+                    handlePasswordValidationAndSubmit();
+                  }}
+                >
+                  <FontAwesome
+                    name="sign-in"
+                    size={22}
+                    color={buttonBackgroundColor.current}
+                  />
+                </Pressable>
               </View>
-            </View>
-          
+              {LoginForm.errors[0].password !== "" && (
+                <View style={styles.LoginFormErrorArea}>
+                  <Text style={styles.LoginFormErrorText}>
+                    {LoginForm.errors[0].password}
+                  </Text>
+                </View>
+              )}
+            </View> */}
+          </View>
         </View>
       </View>
     </SafeAreaView>
@@ -166,6 +284,9 @@ const styles = StyleSheet.create({
     fontSize: 23,
     fontWeight: "500",
   },
+  LoginFormButton: {
+    flex: 1,
+  },
   LoginBody: {
     alignItems: "center",
     justifyContent: "center",
@@ -178,25 +299,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     height: 50,
     gap: 20,
-  },
-  LoginFormInput: {
-    height: 70,
-    padding: 10,
-    gap: 15,
-    paddingInline: 20,
-    borderRadius: 0,
-    backgroundColor: "rgba(255, 255, 255, 1)",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  LoginFormButton: {
-    padding: 10,
-    borderRadius: 5,
-    width: "100%",
-    height: 50,
-    alignItems: "center",
-    justifyContent: "center",
   },
 });
 

@@ -1,0 +1,81 @@
+import React from "react";
+import type {
+  InputModeOptions,
+  TextInput as TextInputType,
+} from "react-native";
+import { StyleSheet, Text, TextInput, View } from "react-native";
+
+const LoginFormInput = ({
+  value,
+  onChange,
+  onEditing,
+  errorMessage,
+  children,
+  options,
+}: {
+  value: string;
+  onChange: (inputText: string) => void;
+  onEditing: () => void;
+  errorMessage?: string;
+  children?: React.ReactNode;
+  options: {
+    ref: React.Ref<TextInputType>;
+    inputMode: InputModeOptions;
+    placeholder: string;
+  };
+}) => {
+  return (
+    <View style={styles.LoginFormTab}>
+      <View style={styles.LoginFormInputGroup}>
+        <TextInput
+          ref={options.ref}
+          inputMode={options.inputMode}
+          placeholder={options.placeholder}
+          value={value}
+          onChangeText={onChange}
+          style={styles.LoginFormInput}
+          onSubmitEditing={onEditing}
+        />
+        {children}
+      </View>
+      {errorMessage && (
+        <View style={styles.LoginFormErrorArea}>
+          <Text style={styles.LoginFormErrorText}>{errorMessage}</Text>
+        </View>
+      )}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  LoginFormTab: {
+    gap: 10,
+    width: "100%",
+    flexDirection: "column",
+    backgroundColor: "rgba(255, 255, 255, 1)",
+    paddingBlock: 10,
+    paddingInline: 20,
+  },
+  LoginFormInputGroup: {
+    borderRadius: 0,
+    color: "rgb(0, 0, 0)",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 10,
+  },
+  LoginFormInput: {
+    height: 30,
+    borderWidth: 1,
+    borderRightColor: "rgba(0, 0, 0, 0.1)",
+    flex: 1,
+  },
+
+  LoginFormErrorArea: {
+    width: "auto",
+  },
+  LoginFormErrorText: {
+    color: "red",
+  },
+});
+export default LoginFormInput;
