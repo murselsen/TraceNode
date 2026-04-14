@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 // Form Modules
 import LoginFormInput from "@/components/ui/LoginFormInput";
+import { signIn } from "@/redux/Auth/operations";
 import { SignInFormValues } from "@/types/Forms";
 import { FontAwesome } from "@expo/vector-icons";
 import * as Yup from "yup";
@@ -40,8 +41,15 @@ const Login = () => {
     errors: useState<SignInFormValues>(initialValues),
   };
 
+  const [tab, setTab] = LoginForm.tabs;
+  const [values, setValues] = LoginForm.values;
+  const [errors, setErrors] = LoginForm.errors;
+  const emailInputRef = LoginForm.inputs.emailInput;
+  const passwordInputRef = LoginForm.inputs.passwordInput;
+
   const handleSubmit = (values: SignInFormValues) => {
     console.log("Form Values:", values);
+    signIn(values);
     // Burada API isteği veya Redux action tetiklenebilir
   };
 
@@ -49,15 +57,15 @@ const Login = () => {
     LoginForm.schema.email
       .validate(LoginForm.values[0].email)
       .then((valid) => {
-        LoginForm.tabs[1]("passwordTab");
-        LoginForm.inputs.passwordInput.current?.focus();
-        LoginForm.errors[1]((prev) => ({
+        setTab("passwordTab");
+        passwordInputRef.current?.focus();
+        setErrors((prev) => ({
           ...prev,
           email: "",
         }));
       })
       .catch((err) => {
-        LoginForm.errors[1]((prev) => ({
+        setErrors((prev) => ({
           ...prev,
           email: err.message,
         }));
@@ -66,50 +74,45 @@ const Login = () => {
 
   const handlePasswordValidationAndSubmit = () => {
     LoginForm.schema.password
-      .validate(LoginForm.values[0].password)
+      .validate(values.password)
       .then((valid) => {
-        LoginForm.errors[1]((prev) => ({
+        setErrors((prev) => ({
           ...prev,
           password: "",
         }));
-        handleSubmit(LoginForm.values[0]);
+        handleSubmit(values);
       })
       .catch((err) => {
-        LoginForm.errors[1]((prev) => ({
+        setErrors((prev) => ({
           ...prev,
           password: err.message,
         }));
       });
   };
 
-  const [tab, setTab] = LoginForm.tabs;
-  const [values, setValues] = LoginForm.values;
-  const [errors, setErrors] = LoginForm.errors;
-  const emailInputRef = LoginForm.inputs.emailInput;
-  const passwordInputRef = LoginForm.inputs.passwordInput;
-
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Image source={loginBackImage} style={StyleSheet.absoluteFill} />
       <View style={styles.LoginContainer}>
+        {/* Login Header */}
         <View style={styles.LoginHeader}>
           <Image source={appLogo} style={styles.AppLogo} />
           <Text style={styles.AppName}>TraceNode</Text>
         </View>
 
+        {/* Login Body */}
         <View style={styles.LoginBody}>
           <Text style={{ color: "white", fontSize: 16 }}>
             TraceNode&apos;a hoş geldiniz! Lütfen giriş yaparak devam edin.
           </Text>
-
           <View style={styles.LoginFormTabs}>
             {/* Start Tab */}
             {tab === "start" && (
               <Pressable
                 style={[styles.LoginFormButton, { backgroundColor: "#2CB4ED" }]}
                 onPress={() => {
-                  LoginForm.inputs.emailInput.current?.focus();
-                  LoginForm.tabs[1]("emailTab");
+                  emailInputRef.current?.focus();
+                  setTab("emailTab");
                 }}
               >
                 <Text style={{ color: "white", fontSize: 16 }}>Devam Et</Text>
@@ -136,6 +139,7 @@ const Login = () => {
                   ref: emailInputRef,
                   inputMode: "email",
                   placeholder: "E-Posta Adresinizi Girin",
+                  keyboardType: "email-address",
                 }}
               >
                 <Pressable onPress={handleEmailValidationAndTabSwitch}>
@@ -163,16 +167,19 @@ const Login = () => {
                   }));
                 }}
                 onEditing={handlePasswordValidationAndSubmit}
+                errorMessage={errors.password}
                 options={{
                   ref: passwordInputRef,
                   inputMode: "text",
                   placeholder: "Şifrenizi Girin",
+                  keyboardType: "visible-password",
+                  secureMode: true,
                 }}
               >
                 <Pressable
                   onPress={() => {
-                    LoginForm.tabs[1]("emailTab");
-                    LoginForm.inputs.emailInput.current?.focus();
+                    setTab("emailTab");
+                    emailInputRef.current?.focus();
                   }}
                   style={{
                     borderRightWidth: 1,
@@ -195,64 +202,37 @@ const Login = () => {
                 </Pressable>
               </LoginFormInput>
             )}
-            {/* <View style={styles.LoginFormTab}>
-              <View style={styles.LoginFormInput}>
-                <TextInput
-                  ref={LoginForm.inputs.passwordInput}
-                  placeholder="Şifrenizi girin"
-                  style={{
-                    borderRightWidth: 1,
-                    borderRightColor: "rgba(0, 0, 0, 0.1)",
-                    flex: 1,
-                  }}
-                  value={LoginForm.values[0].password}
-                  onChangeText={(s) =>
-                    LoginForm.values[1]((prev) => ({
-                      ...prev,
-                      password: s,
-                    }))
-                  }
-                  secureTextEntry={true}
-                  textContentType="password"
-                />
+          </View>
+        </View>
 
-                <Pressable
-                  onPress={() => {
-                    LoginForm.tabs[1]("emailTab");
-                    LoginForm.inputs.emailInput.current?.focus();
-                  }}
-                  style={{
-                    borderRightWidth: 1,
-                    borderRightColor: "rgba(0, 0, 0, 0.1)",
-                    paddingRight: 10,
-                  }}
-                >
-                  <FontAwesome
-                    name="chevron-circle-left"
-                    size={18}
-                    color={buttonBackgroundColor.current}
-                  />
-                </Pressable>
-                <Pressable
-                  onPress={async () => {
-                    handlePasswordValidationAndSubmit();
-                  }}
-                >
-                  <FontAwesome
-                    name="sign-in"
-                    size={22}
-                    color={buttonBackgroundColor.current}
-                  />
-                </Pressable>
-              </View>
-              {LoginForm.errors[0].password !== "" && (
-                <View style={styles.LoginFormErrorArea}>
-                  <Text style={styles.LoginFormErrorText}>
-                    {LoginForm.errors[0].password}
-                  </Text>
-                </View>
-              )}
-            </View> */}
+        {/* Login Footer */}
+        <View style={styles.LoginFooter}>
+          <Text style={styles.LoginFooterTitle}>
+            QR Işlemleri İçin TraceNode&apos;u Kullanın
+          </Text>
+          <View style={styles.LoginFooterTabs}>
+            <Pressable style={styles.LoginFooterTab}>
+              <Image
+                source={require("../../assets/icons/qr-code.png")}
+                style={styles.LoginFooterIcon}
+              />
+              <Text style={styles.LoginFooterText}>Kayıt Ol</Text>
+            </Pressable>
+            <Pressable style={styles.LoginFooterTab}>
+              <Image
+                source={require("../../assets/icons/qr-code.png")}
+                style={styles.LoginFooterIcon}
+              />
+              <Text style={styles.LoginFooterText}>Şifremi Unuttum</Text>
+            </Pressable>
+            <Pressable style={styles.LoginFooterTab}>
+              ,
+              <Image
+                source={require("../../assets/icons/qr-code.png")}
+                style={styles.LoginFooterIcon}
+              />
+              <Text style={styles.LoginFooterText}>Son Üretim Kayıtı</Text>
+            </Pressable>
           </View>
         </View>
       </View>
@@ -265,8 +245,8 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 120,
     alignItems: "center",
-    padding: 20,
-    paddingBlockStart: 40,
+    justifyContent: "space-between",
+    paddingBlockStart: 20,
   },
   LoginHeader: {
     flexDirection: "row",
@@ -286,19 +266,58 @@ const styles = StyleSheet.create({
   },
   LoginFormButton: {
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 5,
   },
   LoginBody: {
+    width: "100%",
+    gap: 20,
     alignItems: "center",
     justifyContent: "center",
-    gap: 20,
-
-    width: "100%",
+    paddingHorizontal: 20,
   },
   LoginFormTabs: {
     width: "100%",
     borderRadius: 5,
     height: 50,
     gap: 20,
+  },
+  LoginFooter: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255, 255, 255,1)",
+    padding: 20,
+    borderTopStartRadius: 30,
+    borderTopEndRadius: 30,
+    gap: 15,
+  },
+  LoginFooterTitle: {
+    color: "gray",
+    fontSize: 16,
+    fontFamily: "Inter-Regular",
+  },
+  LoginFooterTabs: {
+    flexDirection: "row",
+    gap: 20,
+  },
+  LoginFooterTab: {
+    padding: 10,
+    borderRadius: 5,
+    backgroundColor: "rgba(0, 0, 0, 0.2)",
+    justifyContent: "space-around",
+    alignItems: "center",
+    flex: 1,
+  },
+  LoginFooterText: {
+    color: "white",
+    fontSize: 14,
+    fontFamily: "Inter-Regular",
+  },
+  LoginFooterIcon: {
+    width: 45,
+    height: 45,
   },
 });
 

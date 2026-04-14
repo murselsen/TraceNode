@@ -1,6 +1,7 @@
 import React from "react";
 import type {
   InputModeOptions,
+  KeyboardTypeOptions,
   TextInput as TextInputType,
 } from "react-native";
 import { StyleSheet, Text, TextInput, View } from "react-native";
@@ -22,6 +23,8 @@ const LoginFormInput = ({
     ref: React.Ref<TextInputType>;
     inputMode: InputModeOptions;
     placeholder: string;
+    keyboardType: KeyboardTypeOptions;
+    secureMode?: boolean;
   };
 }) => {
   return (
@@ -35,6 +38,9 @@ const LoginFormInput = ({
           onChangeText={onChange}
           style={styles.LoginFormInput}
           onSubmitEditing={onEditing}
+          secureTextEntry={options.secureMode}
+          keyboardType={options.keyboardType}
+          enablesReturnKeyAutomatically={true}
         />
         {children}
       </View>
@@ -54,7 +60,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     backgroundColor: "rgba(255, 255, 255, 1)",
     paddingBlock: 10,
-    paddingInline: 20,
+    paddingInline: 15,
   },
   LoginFormInputGroup: {
     borderRadius: 0,
@@ -65,14 +71,14 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   LoginFormInput: {
-    height: 30,
-    borderWidth: 1,
-    borderRightColor: "rgba(0, 0, 0, 0.1)",
+    height: 40,
+
     flex: 1,
   },
 
   LoginFormErrorArea: {
     width: "auto",
+    paddingHorizontal: 5,
   },
   LoginFormErrorText: {
     color: "red",
