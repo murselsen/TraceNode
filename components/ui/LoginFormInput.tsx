@@ -4,20 +4,18 @@ import type {
   KeyboardTypeOptions,
   TextInput as TextInputType,
 } from "react-native";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, TextInput, View } from "react-native";
 
 const LoginFormInput = ({
   value,
   onChange,
   onEditing,
-  errorMessage,
   children,
   options,
 }: {
   value: string;
   onChange: (inputText: string) => void;
   onEditing: () => void;
-  errorMessage?: string;
   children?: React.ReactNode;
   options: {
     ref: React.Ref<TextInputType>;
@@ -44,11 +42,6 @@ const LoginFormInput = ({
         />
         {children}
       </View>
-      {errorMessage && (
-        <View style={styles.LoginFormErrorArea}>
-          <Text style={styles.LoginFormErrorText}>{errorMessage}</Text>
-        </View>
-      )}
     </View>
   );
 };
